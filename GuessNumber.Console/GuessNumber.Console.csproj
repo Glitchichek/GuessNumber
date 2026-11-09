@@ -8,4 +8,8 @@
     <RootNamespace>Generics_Delegates</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GuessNumber.Core\GuessNumber.Core.csproj" />
+  </ItemGroup>
+
 </Project>

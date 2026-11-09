@@ -1,4 +1,6 @@
 <Solution>
-  <Project Path="GuessNumber.Console/GuessNumber.Console.csproj" />
-  <Project Path="GuessNumber.Core/GuessNumber.Core.csproj" />
+  <Folder Name="/src/">
+    <Project Path="GuessNumber.Console/GuessNumber.Console.csproj" />
+    <Project Path="GuessNumber.Core/GuessNumber.Core.csproj" />
+  </Folder>
 </Solution>
