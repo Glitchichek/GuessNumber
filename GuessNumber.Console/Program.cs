@@ -14,26 +14,59 @@ game.GameEnded += logger.OnGameEnded;
 
 var statsRepo = new FileStatisticsRepository();
 var statsService = new StatisticsService(statsRepo);
+var statsView = new StatisticsView(ui, statsRepo);
 game.GameEnded += statsService.OnGameEnded;
 
-ui.WriteLine("Выберите уровень сложности:");
-ui.WriteLine("1 - Легкий (1..10, 5 попыток)");
-ui.WriteLine("2 - Средний (1..100, 10 попыток)");
-ui.WriteLine("3 - Сложный (1..1000, 15 попыток)");
-ui.WriteLine("4 - Свои настройки");
-ui.Write("Ваш выбор: ");
+bool isRunning = true;
 
-var choice = ui.ReadLine();
-IDifficulty difficulty = choice switch
+while (isRunning)
 {
-    "1" => new EasyDifficulty(),
-    "2" => new MediumDifficulty(),
-    "3" => new HardDifficulty(),
-    "4" => GetCustomDifficulty(ui), // Вызываем наш новый метод
-    _ => new MediumDifficulty()
-};
+    ui.WriteLine("\n ГЛАВНОЕ МЕНЮ ");
+    ui.WriteLine("1. Играть");
+    ui.WriteLine("2. Посмотреть статистику");
+    ui.WriteLine("3. Выход");
+    ui.Write("Ваш выбор: ");
 
-game.Play(difficulty);
+    var choice = ui.ReadLine();
+
+    switch (choice)
+    {
+        case "1":
+            PlayGame(ui, game);
+            break;
+        case "2":
+            statsView.Show();
+            break;
+        case "3":
+            isRunning = false;
+            break;
+        default:
+            ui.WriteLine("Неверный выбор.");
+            break;
+    }
+}
+
+static void PlayGame(IUi ui, Game game)
+{
+    ui.WriteLine("\nВыберите уровень сложности:");
+    ui.WriteLine("1 - Легкий (1..10, 5 попыток)");
+    ui.WriteLine("2 - Средний (1..100, 10 попыток)");
+    ui.WriteLine("3 - Сложный (1..1000, 15 попыток)");
+    ui.WriteLine("4 - Свои настройки");
+    ui.Write("Ваш выбор: ");
+
+    var choice = ui.ReadLine();
+    IDifficulty difficulty = choice switch
+    {
+        "1" => new EasyDifficulty(),
+        "2" => new MediumDifficulty(),
+        "3" => new HardDifficulty(),
+        "4" => GetCustomDifficulty(ui),
+        _ => new MediumDifficulty()
+    };
+
+    game.Play(difficulty);
+}
 
 static IDifficulty GetCustomDifficulty(IUi ui)
 {
