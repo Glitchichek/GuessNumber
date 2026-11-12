@@ -1,7 +1,6 @@
 using GuessNumber.Core;
 
-namespace GuessNumber.ConsoleApp;
-
+namespace GuessNumber.Console;
 public class RandomNumberGenerator : INumberGenerator
 {
     private readonly Random _random = new();

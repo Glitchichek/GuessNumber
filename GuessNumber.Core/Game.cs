@@ -1,9 +1,14 @@
-﻿namespace GuessNumber.Core;
+﻿using GuessNumber.Core.Events;
+
+namespace GuessNumber.Core;
 
 public class Game
 {
     private readonly INumberGenerator _generator;
     private readonly IUi _ui;
+
+    public event EventHandler<GuessEventArgs>? GuessMade;
+    public event EventHandler<GameEndedEventArgs>? GameEnded;
 
     public Game(INumberGenerator generator, IUi ui)
     {
@@ -11,30 +16,47 @@ public class Game
         _ui = ui;
     }
 
-    public void Play()
+    public void Play(IDifficulty difficulty)
     {
-        int secretNumber = _generator.Next(1, 100);
+        int secretNumber = _generator.Next(difficulty.Min, difficulty.Max);
         
-        while (true)
+        for (int attempt = 1; attempt <= difficulty.MaxAttempts; attempt++)
         {
-            _ui.Write("Input number from [1; 100]: ");
+            _ui.Write($"Введите число от [{difficulty.Min}; {difficulty.Max}]: ");
             string? input = _ui.ReadLine();
             
             if (!int.TryParse(input, out int guess))
             {
-                _ui.WriteLine("Wrong input. Please enter a number.");
+                _ui.WriteLine("Неверный ввод. Пожалуйста, введите число.");
+                attempt--;
                 continue;
             }
 
-            if (guess < secretNumber)
-                _ui.WriteLine("Your number is less");
-            else if (guess > secretNumber)
-                _ui.WriteLine("Your number is greater");
-            else
+            bool isWin = guess == secretNumber;
+
+            GuessMade?.Invoke(this, new GuessEventArgs
             {
-                _ui.WriteLine("You are win!!!");
-                break;
+                Attempt = attempt,
+                Guess = guess,
+                SecretNumber = secretNumber,
+                IsWin = isWin
+            });
+
+            if (isWin)
+            {
+                GameEnded?.Invoke(this, new GameEndedEventArgs
+                {
+                    Won = true, Attempts = attempt,
+                    Difficulty = difficulty, SecretNumber = secretNumber
+                });
+                return;
             }
         }
+
+        GameEnded?.Invoke(this, new GameEndedEventArgs
+        {
+            Won = false, Attempts = difficulty.MaxAttempts,
+            Difficulty = difficulty, SecretNumber = secretNumber
+        });
     }
 }

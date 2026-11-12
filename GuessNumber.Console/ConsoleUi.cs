@@ -1,10 +1,10 @@
 using GuessNumber.Core;
 
-namespace GuessNumber.ConsoleApp;
+namespace GuessNumber.Console;
 
 public class ConsoleUi : IUi
 {
-    public void Write(string text) => Console.Write(text);
-    public void WriteLine(string text) => Console.WriteLine(text);
-    public string? ReadLine() => Console.ReadLine();
+    public void Write(string text) => System.Console.Write(text);
+    public void WriteLine(string text) => System.Console.WriteLine(text);
+    public string? ReadLine() => System.Console.ReadLine();
 }
